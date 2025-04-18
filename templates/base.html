@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Airline App</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a> |
+    <a href="/add_airplane">Add Airplane</a>
+    <!-- Add more links here -->
+  </nav>
+  <hr>
+  {% block content %}{% endblock %}
+</body>
+</html>

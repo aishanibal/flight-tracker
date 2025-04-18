@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Add Airplane</h2>
+<form method="POST">
+  <input name="speed" placeholder="Speed"><br>
+  <input name="maintained" placeholder="Maintained"><br>
+  <input name="airline_id" placeholder="Airline ID"><br>
+  <input name="neo" placeholder="Neo (TRUE/FALSE)"><br>
+  <input name="tail_num" placeholder="Tail Number"><br>
+  <input name="location_id" placeholder="Location ID"><br>
+  <input name="model" placeholder="Model"><br>
+  <input name="seat_cap" placeholder="Seat Capacity"><br>
+  <input name="plane_type" placeholder="Plane Type"><br>
+  <button type="submit">Add</button>
+</form>
+{% endblock %}
