@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Add Person</h2>
+<form method="POST">
+    <input name="person_id" placeholder="Person ID"><br>
+    <input name="first_name" placeholder="First Name"><br>
+    <input name="last_name" placeholder="Last Name"><br>
+    <input name="location_id" placeholder="Location ID"><br>
+    <input name="tax_id" placeholder="Tax ID (optional)"><br>
+    <input name="experience" placeholder="Experience (optional)"><br>
+    <input name="miles" placeholder="Miles (optional)"><br>
+    <input name="funds" placeholder="Funds (optional)"><br>
+    <button type="submit">Add</button>
+</form>
+{% endblock %}

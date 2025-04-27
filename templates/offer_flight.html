@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Offer Flight</h2>
+<form method="POST">
+    <input name="flight_id" placeholder="Flight ID"><br>
+    <input name="route_id" placeholder="Route ID"><br>
+    <input name="support_airline" placeholder="Support Airline ID"><br>
+    <input name="support_tail" placeholder="Support Tail Number"><br>
+    <input name="progress" placeholder="Progress"><br>
+    <input name="next_time" placeholder="Next Time (HH:MM:SS)"><br>
+    <input name="cost" placeholder="Cost"><br>
+    <button type="submit">Offer</button>
+</form>
+{% endblock %}

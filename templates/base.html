@@ -1,16 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Airline App</title>
+  <title>Flight Tracker - Group 26</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
   <nav>
-    <a href="/">Home</a> |
-    <a href="/add_airplane">Add Airplane</a>
-    <!-- Add more links here -->
-  </nav>
-  <hr>
+    <div class="dropdown">
+        <button class="dropbtn">Procedures</button>
+        <div class="dropdown-content">
+            <a href="/add_airplane">Add Airplane</a>
+            <a href="/add_airport">Add Airport</a>
+            <a href="/add_person">Add Person</a>
+            <a href="/grant_or_revoke_pilot_license">Grant/Revoke License</a>
+            <a href="/offer_flight">Offer Flight</a>
+            <a href="/flight_landing">Flight Landing</a>
+            <a href="/flight_takeoff">Flight Takeoff</a>
+            <a href="/passengers_board">Passengers Board</a>
+            <a href="/passengers_disembark">Passengers Disembark</a>
+            <a href="/assign_pilot">Assign Pilot</a>
+            <a href="/recycle_crew">Recycle Crew</a>
+            <a href="/retire_flight">Retire Flight</a>
+            <a href="/simulation_cycle">Simulation Cycle</a>
+        </div>
+    </div>
+
+    <div class="dropdown">
+        <button class="dropbtn">Views</button>
+        <div class="dropdown-content">
+            <a href="/flights_in_air">Flights In Air</a>
+            <a href="/flights_on_ground">Flights On Ground</a>
+            <a href="/people_in_air">People In Air</a>
+            <a href="/people_on_ground">People On Ground</a>
+            <a href="/route_summary">Route Summary</a>
+            <a href="/alternative_airports">Alternate Airports</a>
+        </div>
+    </div>
+</nav>
   {% block content %}{% endblock %}
 </body>
 </html>

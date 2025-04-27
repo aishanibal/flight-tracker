@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Add Airport</h2>
+<form method="POST">
+    <input name="airport_id" placeholder="Airport ID"><br>
+    <input name="airport_name" placeholder="Airport Name"><br>
+    <input name="city" placeholder="City"><br>
+    <input name="state" placeholder="State"><br>
+    <input name="country" placeholder="Country"><br>
+    <input name="location_id" placeholder="Location ID"><br>
+    <button type="submit">Add</button>
+</form>
+{% endblock %}
