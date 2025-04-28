@@ -103,7 +103,7 @@ def grant_or_revoke_pilot_license():
     if request.method == 'POST':
         data = (
             clean_str(request.form['person_id']),
-            clean_str(request.form['license']),
+            clean_str(request.form['license'].capitalize()),
         )
         if call_proc('grant_or_revoke_pilot_license', data):
             return redirect('/')
