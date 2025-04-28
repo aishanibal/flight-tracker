@@ -1,7 +1,7 @@
 # flight-tracker
 CS 4400 Group 26 Phase IV
 
-i. Instructions to setup your app
+i. Instructions to setup your app \n
 Download the requirements from requirements.txt
 Set up a connection with SQLWorkbench and ensure the program uses flight_tracker
 
