@@ -1,226 +1,208 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash
 import mysql.connector
 from config_secret import DB_CONFIG
 
-
 app = Flask(__name__)
+app.secret_key = 'phase4_secret'
 
 def get_db():
     return mysql.connector.connect(**DB_CONFIG)
+
+def clean_int(value):
+    return int(value) if value.strip() else None
+
+def clean_bool(value):
+    if value.strip() == '':
+        return None
+    return bool(int(value))
+
+def clean_str(value):
+    return value if value.strip() else None
+
+def call_proc(proc_name, params):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        cursor.callproc(proc_name, params)
+        for result in cursor.stored_results():
+            output = result.fetchall()
+            if output:
+                flash(output[0][0], 'error')
+                return False
+        db.commit()
+        flash(f"{proc_name.replace('_', ' ').capitalize()} successful!", 'success')
+        return True
+    except mysql.connector.Error as err:
+        db.rollback()
+        flash(f"MySQL error: {err}", 'error')
+        return False
+    finally:
+        cursor.close()
+        db.close()
 
 @app.route('/')
 def home():
     return render_template('home.html')
 
+# Procedures
 @app.route('/add_airplane', methods=['GET', 'POST'])
 def add_airplane():
     if request.method == 'POST':
         data = (
-            request.form['speed'],
-            request.form.get('maintained') or None,
-            request.form['airline_id'],
-            request.form['neo'],
-            request.form['tail_num'],
-            request.form['location_id'],
-            request.form.get('model') or None,
-            request.form['seat_cap'],
-            request.form['plane_type'],
+            clean_str(request.form['airline_id']),
+            clean_str(request.form['tail_num']),
+            clean_int(request.form['seat_cap']),
+            clean_int(request.form['speed']),
+            clean_str(request.form['location_id']),
+            clean_str(request.form['plane_type']),
+            clean_bool(request.form.get('maintained') or ''),
+            clean_str(request.form.get('model') or ''),
+            clean_bool(request.form.get('neo') or ''),
         )
-        db = get_db()
-        cursor = db.cursor()
-        cursor.callproc('add_airplane', data)
-        db.commit()
-        cursor.close()
-        db.close()
-        return redirect('/')
+        if call_proc('add_airplane', data):
+            return redirect('/')
+        return redirect(request.url)
     return render_template('add_airplane.html')
 
 @app.route('/add_airport', methods=['GET', 'POST'])
 def add_airport():
     if request.method == 'POST':
         data = (
-            request.form['state'],
-            request.form['airport_id'],
-            request.form['airport_name'],
-            request.form['country'],
-            request.form['city'],
-            request.form['location_id'],
+            clean_str(request.form['airport_id']),
+            clean_str(request.form['airport_name']),
+            clean_str(request.form['city']),
+            clean_str(request.form['state']),
+            clean_str(request.form['country']),
+            clean_str(request.form['location_id']),
         )
-        db = get_db()
-        cursor = db.cursor()
-        cursor.callproc('add_airport', data)
-        db.commit()
-        cursor.close()
-        db.close()
-        return redirect('/')
+        if call_proc('add_airport', data):
+            return redirect('/')
+        return redirect(request.url)
     return render_template('add_airport.html')
 
 @app.route('/add_person', methods=['GET', 'POST'])
 def add_person():
     if request.method == 'POST':
         data = (
-            request.form['location_id'],
-            request.form.get('miles') or None,
-            request.form['person_id'],
-            request.form['first_name'],
-            request.form['tax_id'],
-            request.form.get('funds') or None,
-            request.form['last_name'],
-            request.form['experience'],
+            clean_str(request.form['person_id']),
+            clean_str(request.form['first_name']),
+            clean_str(request.form.get('last_name') or ''),
+            clean_str(request.form['location_id']),
+            clean_str(request.form.get('tax_id') or ''),
+            clean_int(request.form.get('experience') or ''),
+            clean_int(request.form.get('miles') or ''),
+            clean_int(request.form.get('funds') or ''),
         )
-        db = get_db()
-        cursor = db.cursor()
-        cursor.callproc('add_person', data)
-        db.commit()
-        cursor.close()
-        db.close()
-        return redirect('/')
+        if call_proc('add_person', data):
+            return redirect('/')
+        return redirect(request.url)
     return render_template('add_person.html')
 
 @app.route('/grant_or_revoke_pilot_license', methods=['GET', 'POST'])
 def grant_or_revoke_pilot_license():
     if request.method == 'POST':
         data = (
-            request.form['license'],
-            request.form['person_id'],
+            clean_str(request.form['person_id']),
+            clean_str(request.form['license']),
         )
-        db = get_db()
-        cursor = db.cursor()
-        cursor.callproc('grant_or_revoke_pilot_license', data)
-        db.commit()
-        cursor.close()
-        db.close()
-        return redirect('/')
+        if call_proc('grant_or_revoke_pilot_license', data):
+            return redirect('/')
+        return redirect(request.url)
     return render_template('grant_or_revoke_pilot_license.html')
 
 @app.route('/offer_flight', methods=['GET', 'POST'])
 def offer_flight():
     if request.method == 'POST':
         data = (
-            request.form['progress'],
-            request.form['cost'],
-            request.form['flight_id'],
-            request.form['route_id'],
-            request.form['next_time'],
-            request.form['support_airline'],
-            request.form['support_tail'],
+            clean_str(request.form['flight_id']),
+            clean_str(request.form['route_id']),
+            clean_str(request.form.get('support_airline') or ''),
+            clean_str(request.form.get('support_tail') or ''),
+            clean_int(request.form.get('progress') or ''),
+            clean_str(request.form.get('next_time') or ''),
+            clean_int(request.form.get('cost') or ''),
         )
-        db = get_db()
-        cursor = db.cursor()
-        cursor.callproc('offer_flight', data)
-        db.commit()
-        cursor.close()
-        db.close()
-        return redirect('/')
+        if call_proc('offer_flight', data):
+            return redirect('/')
+        return redirect(request.url)
     return render_template('offer_flight.html')
 
+# Single param ones
 @app.route('/flight_landing', methods=['GET', 'POST'])
 def flight_landing():
     if request.method == 'POST':
-        data = (request.form['flight_id'],)
-        db = get_db()
-        cursor = db.cursor()
-        cursor.callproc('flight_landing', data)
-        db.commit()
-        cursor.close()
-        db.close()
-        return redirect('/')
+        data = (clean_str(request.form['flight_id']),)
+        if call_proc('flight_landing', data):
+            return redirect('/')
+        return redirect(request.url)
     return render_template('flight_landing.html')
 
 @app.route('/flight_takeoff', methods=['GET', 'POST'])
 def flight_takeoff():
     if request.method == 'POST':
-        data = (request.form['flight_id'],)
-        db = get_db()
-        cursor = db.cursor()
-        cursor.callproc('flight_takeoff', data)
-        db.commit()
-        cursor.close()
-        db.close()
-        return redirect('/')
+        data = (clean_str(request.form['flight_id']),)
+        if call_proc('flight_takeoff', data):
+            return redirect('/')
+        return redirect(request.url)
     return render_template('flight_takeoff.html')
 
 @app.route('/passengers_board', methods=['GET', 'POST'])
 def passengers_board():
     if request.method == 'POST':
-        data = (request.form['flight_id'],)
-        db = get_db()
-        cursor = db.cursor()
-        cursor.callproc('passengers_board', data)
-        db.commit()
-        cursor.close()
-        db.close()
-        return redirect('/')
+        data = (clean_str(request.form['flight_id']),)
+        if call_proc('passengers_board', data):
+            return redirect('/')
+        return redirect(request.url)
     return render_template('passengers_board.html')
 
 @app.route('/passengers_disembark', methods=['GET', 'POST'])
 def passengers_disembark():
     if request.method == 'POST':
-        data = (request.form['flight_id'],)
-        db = get_db()
-        cursor = db.cursor()
-        cursor.callproc('passengers_disembark', data)
-        db.commit()
-        cursor.close()
-        db.close()
-        return redirect('/')
+        data = (clean_str(request.form['flight_id']),)
+        if call_proc('passengers_disembark', data):
+            return redirect('/')
+        return redirect(request.url)
     return render_template('passengers_disembark.html')
 
 @app.route('/assign_pilot', methods=['GET', 'POST'])
 def assign_pilot():
     if request.method == 'POST':
         data = (
-            request.form['flight_id'],
-            request.form['person_id'],
+            clean_str(request.form['flight_id']),
+            clean_str(request.form['person_id']),
         )
-        db = get_db()
-        cursor = db.cursor()
-        cursor.callproc('assign_pilot', data)
-        db.commit()
-        cursor.close()
-        db.close()
-        return redirect('/')
+        if call_proc('assign_pilot', data):
+            return redirect('/')
+        return redirect(request.url)
     return render_template('assign_pilot.html')
 
 @app.route('/recycle_crew', methods=['GET', 'POST'])
 def recycle_crew():
     if request.method == 'POST':
-        data = (request.form['flight_id'],)
-        db = get_db()
-        cursor = db.cursor()
-        cursor.callproc('recycle_crew', data)
-        db.commit()
-        cursor.close()
-        db.close()
-        return redirect('/')
+        data = (clean_str(request.form['flight_id']),)
+        if call_proc('recycle_crew', data):
+            return redirect('/')
+        return redirect(request.url)
     return render_template('recycle_crew.html')
 
 @app.route('/retire_flight', methods=['GET', 'POST'])
 def retire_flight():
     if request.method == 'POST':
-        data = (request.form['flight_id'],)
-        db = get_db()
-        cursor = db.cursor()
-        cursor.callproc('retire_flight', data)
-        db.commit()
-        cursor.close()
-        db.close()
-        return redirect('/')
+        data = (clean_str(request.form['flight_id']),)
+        if call_proc('retire_flight', data):
+            return redirect('/')
+        return redirect(request.url)
     return render_template('retire_flight.html')
 
 @app.route('/simulation_cycle', methods=['GET', 'POST'])
 def simulation_cycle():
     if request.method == 'POST':
-        db = get_db()
-        cursor = db.cursor()
-        cursor.callproc('simulation_cycle')
-        db.commit()
-        cursor.close()
-        db.close()
-        return redirect('/')
+        if call_proc('simulation_cycle', ()):  # no params
+            return redirect('/')
+        return redirect(request.url)
     return render_template('simulation_cycle.html')
 
-
+# Views
 @app.route('/flights_in_air')
 def flights_in_air():
     return render_view('flights_in_the_air')
@@ -244,7 +226,6 @@ def route_summary():
 @app.route('/alternative_airports')
 def alternative_airports():
     return render_view('alternative_airports')
-
 
 def render_view(view_name):
     db = get_db()

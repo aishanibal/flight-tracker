@@ -129,3 +129,25 @@ th, td {
 tbody tr:hover {
     background-color: #f1f1f1;
 }
+
+.flashes {
+    width: 90%;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.flash {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.flash.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.flash.success {
+    background-color: #d4edda;
+    color: #155724;
+}
