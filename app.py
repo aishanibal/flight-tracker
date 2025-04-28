@@ -127,7 +127,6 @@ def offer_flight():
         return redirect(request.url)
     return render_template('offer_flight.html')
 
-# Single param ones
 @app.route('/flight_landing', methods=['GET', 'POST'])
 def flight_landing():
     if request.method == 'POST':
@@ -197,7 +196,7 @@ def retire_flight():
 @app.route('/simulation_cycle', methods=['GET', 'POST'])
 def simulation_cycle():
     if request.method == 'POST':
-        if call_proc('simulation_cycle', ()):  # no params
+        if call_proc('simulation_cycle', ()): 
             return redirect('/')
         return redirect(request.url)
     return render_template('simulation_cycle.html')
